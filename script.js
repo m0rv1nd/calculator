@@ -1,6 +1,12 @@
-let numberOne = 10;
-let numberTwo = 0;
-let operator = "/";
+const digitButtons = document.querySelectorAll(".digits");
+const operatorButtons = document.querySelectorAll(".operator");
+const equalButton = document.querySelector(".equal");
+const input = document.querySelector("input");
+
+let numberOne = "";
+let numberTwo = "";
+let operator = "";
+input.value = 0;
 
 function add (a, b) {
     return a + b;
@@ -37,5 +43,29 @@ function operate (a, b, symbol) {
     return result;
 }
 
-//console.log(operate(numberOne, numberTwo, operator));
+digitButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        if (!operator) {
+            numberOne += button.value;
+            input.value = numberOne;
+        } else {
+            numberTwo += button.value;
+            input.value = numberOne + operator + numberTwo;
+        }
+    });
+});
 
+operatorButtons.forEach(button => {
+    button.addEventListener("click", () => {
+        if (numberOne && !numberTwo) {
+            operator = button.value;
+            input.value = numberOne + operator;
+        }
+    });
+});
+
+equalButton.addEventListener("click", () => {
+    if (numberOne != "" && numberTwo != "" && operator != "") {
+        alert(operate(numberOne, numberTwo, operator));
+    }
+});
