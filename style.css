@@ -1,0 +1,52 @@
+/* CSS RESET */
+*, *::before, *::after {
+    box-sizing: border-box;
+  }
+
+* {
+margin: 0;
+} 
+
+body {
+    background-color: black;
+    color: black;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#calculator-container {
+    width: 500px;
+    height: 800px;
+    background-color: grey;
+}
+
+#calculator-screen {
+    width: 500px;
+    height: 200px;
+    background-color: yellow;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    padding: 20px;
+}
+
+.long-button {
+    width: 225px;
+    height: 100px;
+}
+
+.short-button {
+    width: 100px;
+    height: 100px;
+}
+
+#calculator-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: space-evenly;
+    height: 600px;
+    align-items: center;
+}
