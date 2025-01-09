@@ -16,6 +16,10 @@ body {
     align-items: center;
 }
 
+input {
+    display: block;
+}
+
 #calculator-container {
     width: 500px;
     height: 800px;
@@ -27,6 +31,7 @@ body {
     height: 200px;
     background-color: yellow;
     display: flex;
+    flex-direction: column;
     justify-content: flex-end;
     align-items: flex-end;
     padding: 20px;
