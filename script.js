@@ -2,8 +2,8 @@
 Math.round(123.4567 * 100) / 100; // 123.46
 let rounded = Number(num.toFixed(18));
    
-   decimal dot
-   backspace button
+   
+   strange number after multiply for example 1.3*3 = 3.9000000000000004 
    keyboard support
    cool layout 
    color change
@@ -13,6 +13,8 @@ let rounded = Number(num.toFixed(18));
    clear button
    divide by 0
    first negative number
+   backspace button
+   fix possibility to add dot after Error is display
 */
 
 const digitButtons = document.querySelectorAll(".digits");
@@ -21,7 +23,12 @@ const equalButtons = document.querySelectorAll(".equal");
 const inputResult = document.querySelector("#result");
 const inputCalc = document.querySelector("#calculation");
 const clearButton = document.querySelector("#clear");
+const undoButton = document.querySelector("#undo");
 const negativeButton = document.querySelector(".negative");
+const decimalDotButton = document.querySelector(".decimal-dot");
+
+let countDecimalDotOne = 0;
+let countDecimalDotTwo = 0;
 
 let numberOne = "";
 let numberTwo = "";
@@ -29,7 +36,7 @@ let operator = "";
 inputResult.value = 0;
 
 function add (a, b) {
-    return a + b;
+    return Math.round((a + b) * 100) / 100;
 }
 
 function subtract (a, b) {
@@ -68,18 +75,28 @@ digitButtons.forEach(button => {
     button.addEventListener("click", () => {
         if (!operator) {
             if (inputResult.value != "ERROR") {
-                numberOne += button.value;
-                inputResult.value = numberOne;
-            } else {
+                if (inputResult.value == "0" && button.value == "0") {
+                    inputResult.value = "0";
+                    numberOne = "0";
+                } else if (numberOne != "0") {
+                    numberOne += button.value;
+                    inputResult.value = numberOne;
+                }
+            } 
+            else {
                 numberOne = "";
                 inputResult.value = "";
                 numberOne += button.value;
                 inputResult.value = numberOne;
             }
         } else {
-            numberTwo += button.value;
-            inputResult.value = numberOne + operator + numberTwo;
-        } 
+                if (numberTwo == "0" && button.value == "0") {
+                    numberTwo = "0";
+                } else if (numberTwo != "0") {
+                    numberTwo += button.value;
+                    inputResult.value = numberOne + operator + numberTwo;
+                }
+            }      
     });
 });
 
@@ -90,6 +107,10 @@ operatorButtons.forEach(button => {
             inputResult.value = numberOne + operator;
         } else if (inputResult.value == "ERROR") {
             operator = "";
+        }  else if (numberOne == "" && inputResult.value == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
+            numberOne = "0"
+            operator = button.value;
+            inputResult.value = numberOne + operator;
         } 
     });
 });
@@ -104,6 +125,8 @@ equalButtons.forEach(button => {
                     numberOne = inputResult.value;
                     operator = "";
                     numberTwo = "";
+                    countDecimalDotOne = 0;
+                    countDecimalDotTwo = 0;
                     break;
                 case "+":
                     inputResult.value = operate(+numberOne, +numberTwo, operator);
@@ -111,6 +134,8 @@ equalButtons.forEach(button => {
                     numberOne = inputResult.value;
                     operator = "+";
                     numberTwo = "";
+                    countDecimalDotOne = 0;
+                    countDecimalDotTwo = 0;
                     inputResult.value = numberOne + operator;
                     break;
                 case "-":
@@ -119,6 +144,8 @@ equalButtons.forEach(button => {
                     numberOne = inputResult.value;
                     operator = "-";
                     numberTwo = "";
+                    countDecimalDotOne = 0;
+                    countDecimalDotTwo = 0;
                     inputResult.value = numberOne + operator;
                     break;
                 case "*":
@@ -127,6 +154,8 @@ equalButtons.forEach(button => {
                     numberOne = inputResult.value;
                     operator = "*";
                     numberTwo = "";
+                    countDecimalDotOne = 0;
+                    countDecimalDotTwo = 0;
                     inputResult.value = numberOne + operator;
                     break;
                 case "/":
@@ -135,6 +164,8 @@ equalButtons.forEach(button => {
                     numberOne = inputResult.value;
                     operator = "/";
                     numberTwo = "";
+                    countDecimalDotOne = 0;
+                    countDecimalDotTwo = 0;
                     inputResult.value = numberOne + operator;
                     break;
             }
@@ -148,6 +179,8 @@ clearButton.addEventListener("click", () => {
     operator = "";
     inputResult.value = 0;
     inputCalc.value = "";
+    countDecimalDotOne = 0;
+    countDecimalDotTwo = 0;
 });
 
 negativeButton.addEventListener("click", () => {
@@ -157,4 +190,54 @@ negativeButton.addEventListener("click", () => {
     }
 });
 
+decimalDotButton.addEventListener("click", () => {
+    if (countDecimalDotOne == 0) {
+        if (inputResult.value == 0) {
+            inputResult.value = "0.";
+            numberOne = "0.";
+            countDecimalDotOne++;
+        } else if (numberOne != "" && operator == "" && inputResult.value != "ERROR") {
+            inputResult.value += "."
+            numberOne += ".";
+            countDecimalDotOne++;
+        } else if (inputResult.value == "ERROR") {
+            inputResult.value = "0.";
+            numberOne = "0.";
+            countDecimalDotOne++;
+        }
+    }
+    if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
+        if (numberTwo == "") {
+            inputResult.value += "0."
+            numberTwo = "0.";
+            countDecimalDotTwo++;
+        } else {
+            inputResult.value += "."
+            numberTwo += ".";
+            countDecimalDotTwo++;
+        }
+    }
+});
+
+undoButton.addEventListener("click", () => {
+    let lastCharacter;
+    if (numberOne != "" && operator != "" && numberTwo != "") {
+        lastCharacter = numberTwo.length-1;
+        if (numberTwo.charAt(lastCharacter) == ".") {
+            countDecimalDotTwo = 0;
+        }
+        numberTwo = numberTwo.substring(0, lastCharacter);
+        inputResult.value = numberOne + operator + numberTwo;
+    } else if (numberOne != "" && operator != "") {
+        operator = "";
+        inputResult.value = numberOne;
+    } else if (numberOne) {
+        lastCharacter = numberOne.length-1;
+        if (numberOne.charAt(lastCharacter) == ".") {
+            countDecimalDotOne = 0;
+        }
+        numberOne = numberOne.substring(0, lastCharacter);
+        inputResult.value = numberOne;
+    }   
+});
 
