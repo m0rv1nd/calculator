@@ -1,4 +1,10 @@
-/* round to avoid overflow 
+/* 
+HALL OF BUGS:
+
+    * after key on keyboard is pressed in browser console i have error: script.js:200 Uncaught TypeError: Cannot read properties of null (reading 'value')nat HTMLDocument.operatorDisplay (script.js:200:27) 
+    * after divide by 0 and "ERROR" is display then I press equal button which is also operator button inputResult is "0+"
+
+round to avoid overflow 
 Math.round(123.4567 * 100) / 100; // 123.46
 let rounded = Number(num.toFixed(18));
    
@@ -71,107 +77,13 @@ function operate (a, b, symbol) {
     return result;
 }
 
-digitButtons.forEach(button => {
-    button.addEventListener("click", () => {
-        if (!operator) {
-            if (inputResult.value != "ERROR") {
-                if (inputResult.value == "0" && button.value == "0") {
-                    inputResult.value = "0";
-                    numberOne = "0";
-                } else if (numberOne != "0") {
-                    numberOne += button.value;
-                    inputResult.value = numberOne;
-                }
-            } 
-            else {
-                numberOne = "";
-                inputResult.value = "";
-                numberOne += button.value;
-                inputResult.value = numberOne;
-            }
-        } else {
-                if (numberTwo == "0" && button.value == "0") {
-                    numberTwo = "0";
-                } else if (numberTwo != "0") {
-                    numberTwo += button.value;
-                    inputResult.value = numberOne + operator + numberTwo;
-                }
-            }      
-    });
-});
-
-operatorButtons.forEach(button => {
-    button.addEventListener("click", () => {
-        if (numberOne && numberOne != "-" && !numberTwo && !operator && inputResult.value !="ERROR") {
-            operator = button.value;
-            inputResult.value = numberOne + operator;
-        } else if (inputResult.value == "ERROR") {
-            operator = "";
-        }  else if (numberOne == "" && inputResult.value == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
-            numberOne = "0"
-            operator = button.value;
-            inputResult.value = numberOne + operator;
-        } 
-    });
-});
-
-equalButtons.forEach(button => {
-    button.addEventListener("click", () => {
-        if (numberOne != "" && numberTwo != "" && operator != "") {
-            switch (button.value) {
-                case "=":
-                    inputResult.value = operate(+numberOne, +numberTwo, operator);
-                    inputCalc.value = numberOne + operator + numberTwo;
-                    numberOne = inputResult.value;
-                    operator = "";
-                    numberTwo = "";
-                    countDecimalDotOne = 0;
-                    countDecimalDotTwo = 0;
-                    break;
-                case "+":
-                    inputResult.value = operate(+numberOne, +numberTwo, operator);
-                    inputCalc.value = numberOne + operator + numberTwo;
-                    numberOne = inputResult.value;
-                    operator = "+";
-                    numberTwo = "";
-                    countDecimalDotOne = 0;
-                    countDecimalDotTwo = 0;
-                    inputResult.value = numberOne + operator;
-                    break;
-                case "-":
-                    inputResult.value = operate(+numberOne, +numberTwo, operator);
-                    inputCalc.value = numberOne + operator + numberTwo;
-                    numberOne = inputResult.value;
-                    operator = "-";
-                    numberTwo = "";
-                    countDecimalDotOne = 0;
-                    countDecimalDotTwo = 0;
-                    inputResult.value = numberOne + operator;
-                    break;
-                case "*":
-                    inputResult.value = operate(+numberOne, +numberTwo, operator);
-                    inputCalc.value = numberOne + operator + numberTwo;
-                    numberOne = inputResult.value;
-                    operator = "*";
-                    numberTwo = "";
-                    countDecimalDotOne = 0;
-                    countDecimalDotTwo = 0;
-                    inputResult.value = numberOne + operator;
-                    break;
-                case "/":
-                    inputResult.value = operate(+numberOne, +numberTwo, operator);
-                    inputCalc.value = numberOne + operator + numberTwo;
-                    numberOne = inputResult.value;
-                    operator = "/";
-                    numberTwo = "";
-                    countDecimalDotOne = 0;
-                    countDecimalDotTwo = 0;
-                    inputResult.value = numberOne + operator;
-                    break;
-            }
-        } 
-    });
-});
+digitButtons.forEach(button => button.addEventListener("click", digitsDisplay));
+document.addEventListener("keydown", digitsDisplay); 
+operatorButtons.forEach(button => button.addEventListener("click", operatorDisplay));
+document.addEventListener("keydown", operatorDisplay); 
+equalButtons.forEach(button => button.addEventListener("click", result));
+document.addEventListener("keydown", result);    
+   
 
 clearButton.addEventListener("click", () => {
     numberOne = "";
@@ -241,3 +153,161 @@ undoButton.addEventListener("click", () => {
     }   
 });
 
+function digitsDisplay(event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target; 
+    } else if (event.type === "keydown" && inputResult.value !== "ERROR") {
+        const keyPressed = event.key;
+        button = document.querySelector(`.digits[value="${keyPressed}"]`);
+    }
+
+    if (!operator) {
+        if (inputResult.value != "ERROR") {
+            if (inputResult.value == "0" && button.value == "0") {
+                inputResult.value = "0";
+                numberOne = "0";
+            } else if (numberOne != "0") {
+                numberOne += button.value;
+                inputResult.value = numberOne;
+            }
+        } 
+        else {
+            numberOne = "";
+            inputResult.value = "";
+            numberOne += button.value;
+            inputResult.value = numberOne;
+        }
+    } else {
+            if (numberTwo == "0" && button.value == "0") {
+                numberTwo = "0";
+            } else if (numberTwo != "0") {
+                numberTwo += button.value;
+                inputResult.value = numberOne + operator + numberTwo;
+            }
+        }
+}
+
+function operatorDisplay(event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target;
+    } else if (event.type === "keydown" && inputResult.value !== "ERROR") {
+        button = document.querySelector(`.operator[value="${event.key}"]`);
+    }
+    if (numberOne && numberOne != "-" && !numberTwo && !operator && inputResult.value !="ERROR") {
+        operator = button.value;
+        inputResult.value = numberOne + operator;
+    } else if (inputResult.value == "ERROR") {
+        operator = "";
+    }  else if (numberOne == "" && inputResult.value == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
+        numberOne = "0"
+        operator = button.value;
+        inputResult.value = numberOne + operator;
+    }
+}
+
+function result(event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target;
+    } else if (event.type === "keydown" && inputResult.value !== "ERROR") {
+        button = document.querySelector(`.equal[value="${event.key}"]`);
+    }
+
+    if (numberOne != "" && numberTwo != "" && operator != "") {
+        switch (button.value) {
+            case "=":
+                inputResult.value = operate(+numberOne, +numberTwo, operator);
+                inputCalc.value = numberOne + operator + numberTwo;
+                numberOne = inputResult.value;
+                operator = "";
+                numberTwo = "";
+                countDecimalDotOne = 0;
+                countDecimalDotTwo = 0;
+                break;
+            case "+":
+                inputResult.value = operate(+numberOne, +numberTwo, operator);
+                inputCalc.value = numberOne + operator + numberTwo;
+                numberOne = inputResult.value;
+                if (inputResult.value == "ERROR") operator = ""
+                else operator = "+"
+                numberTwo = "";
+                countDecimalDotOne = 0;
+                countDecimalDotTwo = 0;
+                inputResult.value = numberOne + operator;
+                break;
+            case "-":
+                inputResult.value = operate(+numberOne, +numberTwo, operator);
+                inputCalc.value = numberOne + operator + numberTwo;
+                numberOne = inputResult.value;
+                operator = "-";
+                numberTwo = "";
+                countDecimalDotOne = 0;
+                countDecimalDotTwo = 0;
+                inputResult.value = numberOne + operator;
+                break;
+            case "*":
+                inputResult.value = operate(+numberOne, +numberTwo, operator);
+                inputCalc.value = numberOne + operator + numberTwo;
+                numberOne = inputResult.value;
+                operator = "*";
+                numberTwo = "";
+                countDecimalDotOne = 0;
+                countDecimalDotTwo = 0;
+                inputResult.value = numberOne + operator;
+                break;
+            case "/":
+                inputResult.value = operate(+numberOne, +numberTwo, operator);
+                inputCalc.value = numberOne + operator + numberTwo;
+                numberOne = inputResult.value;
+                operator = "/";
+                numberTwo = "";
+                countDecimalDotOne = 0;
+                countDecimalDotTwo = 0;
+                inputResult.value = numberOne + operator;
+                break;
+        }
+    }
+}
+
+/*
+    function digitsDisplay(event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target; 
+    } else if (event.type === "keydown") {
+        const keyPressed = event.key;
+        button = document.querySelector(`.digits[value="${keyPressed}"]`);
+    }
+
+    if (!operator) {
+        if (inputResult.value != "ERROR") {
+            if (inputResult.value == "0" && button.value == "0") {
+                inputResult.value = "0";
+                numberOne = "0";
+            } else if (numberOne != "0") {
+                numberOne += button.value;
+                inputResult.value = numberOne;
+            }
+        } 
+        else {
+            numberOne = "";
+            inputResult.value = "";
+            numberOne += button.value;
+            inputResult.value = numberOne;
+        }
+    } else {
+            if (numberTwo == "0" && button.value == "0") {
+                numberTwo = "0";
+            } else if (numberTwo != "0") {
+                numberTwo += button.value;
+                inputResult.value = numberOne + operator + numberTwo;
+            }
+        }
+}
+*/ 
