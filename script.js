@@ -31,7 +31,7 @@ const inputCalc = document.querySelector("#calculation");
 const clearButton = document.querySelector("#clear");
 const undoButton = document.querySelector("#undo");
 const negativeButton = document.querySelector(".negative");
-const decimalDotButton = document.querySelector(".decimal-dot");
+const decimalSeparator = document.querySelector(".decimal-dot");
 
 let countDecimalDotOne = 0;
 let countDecimalDotTwo = 0;
@@ -78,12 +78,19 @@ function operate (a, b, symbol) {
 }
 
 digitButtons.forEach(button => button.addEventListener("click", digitsDisplay));
-document.addEventListener("keydown", digitsDisplay); 
+document.addEventListener("keydown", digitsDisplay);
+
 operatorButtons.forEach(button => button.addEventListener("click", operatorDisplay));
-document.addEventListener("keydown", operatorDisplay); 
+document.addEventListener("keydown", operatorDisplay);
+ 
 equalButtons.forEach(button => button.addEventListener("click", result));
-document.addEventListener("keydown", result);    
-   
+document.addEventListener("keydown", result);
+
+decimalSeparator.addEventListener("click", decimalSeparatorDisplay);
+document.addEventListener("keydown", decimalSeparatorDisplay);   
+
+negativeButton.addEventListener("click", negative);
+document.addEventListener("keydown", negative);
 
 clearButton.addEventListener("click", () => {
     numberOne = "";
@@ -94,14 +101,15 @@ clearButton.addEventListener("click", () => {
     countDecimalDotOne = 0;
     countDecimalDotTwo = 0;
 });
-
+/*
 negativeButton.addEventListener("click", () => {
     if (!numberOne) {
         numberOne = negativeButton.value;
         inputResult.value = numberOne;
     }
 });
-
+*/
+/*
 decimalDotButton.addEventListener("click", () => {
     if (countDecimalDotOne == 0) {
         if (inputResult.value == 0) {
@@ -130,6 +138,7 @@ decimalDotButton.addEventListener("click", () => {
         }
     }
 });
+*/
 
 undoButton.addEventListener("click", () => {
     let lastCharacter;
@@ -158,7 +167,7 @@ function digitsDisplay(event) {
 
     if (event.type === "click") {
         button = event.target; 
-    } else if (event.type === "keydown" && inputResult.value !== "ERROR") {
+    } else if (event.type === "keydown") {
         const keyPressed = event.key;
         button = document.querySelector(`.digits[value="${keyPressed}"]`);
     }
@@ -194,9 +203,10 @@ function operatorDisplay(event) {
 
     if (event.type === "click") {
         button = event.target;
-    } else if (event.type === "keydown" && inputResult.value !== "ERROR") {
+    } else if (event.type === "keydown") {
         button = document.querySelector(`.operator[value="${event.key}"]`);
     }
+
     if (numberOne && numberOne != "-" && !numberTwo && !operator && inputResult.value !="ERROR") {
         operator = button.value;
         inputResult.value = numberOne + operator;
@@ -209,12 +219,94 @@ function operatorDisplay(event) {
     }
 }
 
+function decimalSeparatorDisplay (event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target;
+    } else if (event.type === "keydown") {
+        button = document.querySelector(`.decimal-dot[value="${event.key}"]`);
+    }
+
+    if (countDecimalDotOne == 0) {
+        if (inputResult.value == 0) {
+            inputResult.value = "0.";
+            numberOne = "0.";
+            countDecimalDotOne++;
+        } else if (numberOne != "" && operator == "" && inputResult.value != "ERROR") {
+            inputResult.value += "."
+            numberOne += ".";
+            countDecimalDotOne++;
+        } else if (inputResult.value == "ERROR") {
+            inputResult.value = "0.";
+            numberOne = "0.";
+            countDecimalDotOne++;
+        }
+    }
+    if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
+        if (numberTwo == "") {
+            inputResult.value += "0."
+            numberTwo = "0.";
+            countDecimalDotTwo++;
+        } else {
+            inputResult.value += "."
+            numberTwo += ".";
+            countDecimalDotTwo++;
+        }
+    }
+}
+
+function negative (event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target;
+    } else if (event.type === "keydown") {
+        button = document.querySelector(`.negative[value="${event.key}"]`);
+    }
+
+    if (!numberOne) {
+        numberOne = negativeButton.value;
+        inputResult.value = numberOne;
+    }
+}
+
+/*
+chatgpt output
+
+function operatorDisplay(event) {
+    let button;
+
+    if (event.type === "click") {
+        button = event.target;
+    } else if (event.type === "keydown") {
+        button = document.querySelector(`.operator[value="${event.key}"]`);
+    }
+
+    // Ensure button is valid and `inputResult` is not "ERROR"
+    if (button && inputResult.value !== "ERROR") {
+        if (numberOne && numberOne != "-" && !numberTwo && !operator) {
+            operator = button.value;
+            inputResult.value = numberOne + operator;
+        } else if (numberOne === "" && inputResult.value === "0" &&
+                   (button.value === "+" || button.value === "*" || button.value === "/")) {
+            numberOne = "0";
+            operator = button.value;
+            inputResult.value = numberOne + operator;
+        }
+    } else if (inputResult.value === "ERROR") {
+        // Prevent operator assignment when inputResult is "ERROR"
+        operator = "";
+    }
+}
+*/
+
 function result(event) {
     let button;
 
     if (event.type === "click") {
         button = event.target;
-    } else if (event.type === "keydown" && inputResult.value !== "ERROR") {
+    } else if (event.type === "keydown") {
         button = document.querySelector(`.equal[value="${event.key}"]`);
     }
 
@@ -273,6 +365,7 @@ function result(event) {
         }
     }
 }
+
 
 /*
     function digitsDisplay(event) {
