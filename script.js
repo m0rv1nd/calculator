@@ -1,11 +1,6 @@
 /* 
 HALL OF BUGS AND FUTURE IMPROVEMENTS:
 
-* if I add first sign which is minus and then add . the result is -. I want to have -0. in this case.
-* add number two negative
-* If I have ERROR I can delete it by undo function and then add operator or number to part of "ERROR" word.
-* If I have result which contain minus sign and then delete almost what screen contain but keep minus sign I can't add "0." with press "." on keyboard.
-* If I delete what screen contain and if I press "." on keyboard. The screen display "-" instead of "0."
 * Input for calculator screen doesn't work well because if I move a cursor I can add for example letters.
 
 round to avoid overflow 
@@ -29,7 +24,14 @@ let rounded = Number(num.toFixed(18));
     * In decimal and clear function mouse doesn't work after add keyboard support.
     * if result contain decimal fraction for example 0.4 + 0.3 = 0.7. I can add next decimal to 0.7 , what is 0.7.
     * if I negate first number I can add multiple zeros after minus sign
-    * if I add first sign which is minus and then add 0 and . the result is 0. without minus sign 
+    * if I add first sign which is minus and then add 0 and . the result is 0. without minus sign
+    * if I add first sign which is minus and then add . the result is -. I want to have -0. in this case.
+    * add number two negative
+    * If I press multiply sign on keyboard after numberOne inputResult display numberOne value with multiply and negative sign.
+    * In reference to the above error if i would like to delete the contents of the screen i can delete numberTwo and negative sign.
+    * If I divide numberOne by 0 and then press "/" an input display "ERROR/".
+    * If I have ERROR I can delete it by undo function and then add operator or number to part of "ERROR" word.
+    * If I have result which contain minus sign and then delete almost what screen contain but keep minus sign I can't add "0." with press "." on keyboard. 
 */
 
 const digitButtons = document.querySelectorAll(".digits");
@@ -187,7 +189,10 @@ function decimalSeparatorDisplay(event) {
                 inputResult.value = "0.";
                 numberOne = "0.";
                 countDecimalDotOne++;
-            } 
+            } else if (numberOne == "-") {
+                numberOne += "0.";
+                inputResult.value = numberOne;
+            }
         }
         if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
             if (numberTwo == "") {
@@ -203,7 +208,6 @@ function decimalSeparatorDisplay(event) {
     } else return;   
 }
 
-
 function clearAll (event) {
     if (event.type === "click" || event.key === "Delete") {
         numberOne = "";
@@ -217,7 +221,7 @@ function clearAll (event) {
 }
 
 function undo (event) {
-    if (event.type === "click" || event.key === "Backspace") {
+    if ((event.type === "click" || event.key === "Backspace") && inputResult.value != "ERROR") {
         let lastCharacter;
         if (numberOne != "" && operator != "" && numberTwo != "") {
             lastCharacter = numberTwo.length-1;
@@ -233,11 +237,11 @@ function undo (event) {
             lastCharacter = numberOne.length-1;
             if (numberOne.charAt(lastCharacter) == ".") {
                 countDecimalDotOne = 0;
-            }
+            } 
             numberOne = numberOne.substring(0, lastCharacter);
-            inputResult.value = numberOne;
-        }
+            inputResult.value = numberOne.length > 0 ? numberOne : "0";
     } else return;
+}
 }
 
 function negative (event) {
@@ -248,10 +252,12 @@ function negative (event) {
     } else if (event.type === "keydown") {
         button = document.querySelector(`.negative[value="${event.key}"]`);
     }
-
     if (!numberOne) {
-        numberOne = negativeButton.value;
+        numberOne = button.value;
         inputResult.value = numberOne;
+    } else if (numberOne && operator && !numberTwo && operator != "-") {
+        numberTwo = button.value;
+        inputResult.value += numberTwo;            
     }
 }
 
@@ -266,7 +272,7 @@ function result(event) {
         } else return;
     }
 
-    if (numberOne != "" && numberTwo != "" && operator != "") {
+    if (numberOne != "" && numberTwo != "" && numberTwo != "-" && operator != "") {
         switch (button.value) {
             case "=":
                 inputResult.value = operate(+numberOne, +numberTwo, operator);
@@ -292,7 +298,8 @@ function result(event) {
                 inputResult.value = operate(+numberOne, +numberTwo, operator);
                 inputCalc.value = numberOne + operator + numberTwo;
                 numberOne = inputResult.value;
-                operator = "-";
+                if (inputResult.value == "ERROR") operator = ""
+                else operator = "-"
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
@@ -302,7 +309,8 @@ function result(event) {
                 inputResult.value = operate(+numberOne, +numberTwo, operator);
                 inputCalc.value = numberOne + operator + numberTwo;
                 numberOne = inputResult.value;
-                operator = "*";
+                if (inputResult.value == "ERROR") operator = ""
+                else operator = "*"
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
@@ -312,7 +320,8 @@ function result(event) {
                 inputResult.value = operate(+numberOne, +numberTwo, operator);
                 inputCalc.value = numberOne + operator + numberTwo;
                 numberOne = inputResult.value;
-                operator = "/";
+                if (inputResult.value == "ERROR") operator = ""
+                else operator = "/"
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
@@ -321,42 +330,3 @@ function result(event) {
         }
     }
 }
-
-
-/*
-    function digitsDisplay(event) {
-    let button;
-
-    if (event.type === "click") {
-        button = event.target; 
-    } else if (event.type === "keydown") {
-        const keyPressed = event.key;
-        button = document.querySelector(`.digits[value="${keyPressed}"]`);
-    }
-
-    if (!operator) {
-        if (inputResult.value != "ERROR") {
-            if (inputResult.value == "0" && button.value == "0") {
-                inputResult.value = "0";
-                numberOne = "0";
-            } else if (numberOne != "0") {
-                numberOne += button.value;
-                inputResult.value = numberOne;
-            }
-        } 
-        else {
-            numberOne = "";
-            inputResult.value = "";
-            numberOne += button.value;
-            inputResult.value = numberOne;
-        }
-    } else {
-            if (numberTwo == "0" && button.value == "0") {
-                numberTwo = "0";
-            } else if (numberTwo != "0") {
-                numberTwo += button.value;
-                inputResult.value = numberOne + operator + numberTwo;
-            }
-        }
-}
-*/
