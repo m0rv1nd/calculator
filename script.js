@@ -1,6 +1,8 @@
 /* 
 HALL OF BUGS AND FUTURE IMPROVEMENTS:
 
+* (negative) Uncaught TypeError: Cannot read properties of null (reading 'value')
+* (operator) Uncaught TypeError: Cannot read properties of null (reading 'value')
 * Input for calculator screen doesn't work well because if I move a cursor I can add for example letters.
 
 round to avoid overflow 
@@ -249,9 +251,10 @@ function negative (event) {
 
     if (event.type === "click") {
         button = event.target;
-    } else if (event.type === "keydown") {
+    } else if (event.type === "keydown" && event.key == "-") {
         button = document.querySelector(`.negative[value="${event.key}"]`);
-    }
+    } else return;
+
     if (!numberOne) {
         numberOne = button.value;
         inputResult.value = numberOne;
