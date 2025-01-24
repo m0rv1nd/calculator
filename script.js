@@ -15,7 +15,7 @@ let unlockNegative = false;
 let numberOne = "";
 let numberTwo = "";
 let operator = "";
-inputResult.value = 0;
+inputResult.textContent = 0;
 
 function add (a, b) {
     return Math.round((a + b) * 100) / 100;
@@ -83,41 +83,43 @@ function digitsDisplay(event) {
         if (event.key >= 0 && event.key <= 9) {
             button = document.querySelector(`.digits[value="${event.key}"]`);
         } else return;
-    } 
+    }
+    
+    inputLengthCheck();
     // First number 
     if (!operator) {
-        if (inputResult.value != "ERROR") {
+        if (inputResult.textContent != "ERROR") {
             // The following lines of code are intended to prevent the possibility of writing additional zeros at the beginning of a number
-            if (inputResult.value == "0" && button.value == "0") {
+            if (inputResult.textContent == "0" && button.value == "0") {
                 numberOne = "0";
-                inputResult.value = numberOne;
+                inputResult.textContent = numberOne;
             // Similar to the above with the exception that it prevents adding more zeros when the first character is minus 
-            } else if (inputResult.value == "-" && button.value == "0") {
+            } else if (inputResult.textContent == "-" && button.value == "0") {
                 numberOne = "-0";
-                inputResult.value = numberOne;
-            // In the following code block it is necessary to write numberOne != “0”, because if you use inputResult.value == “0” it would not be possible to enter more digits forming the first number.
-            } else if (numberOne != "0" && inputResult.value != "-0") {
+                inputResult.textContent = numberOne;
+            // In the following code block it is necessary to write numberOne != “0”, because if you use inputResult.textContent == “0” it would not be possible to enter more digits forming the first number.
+            } else if (numberOne != "0" && inputResult.textContent != "-0") {
                 numberOne += button.value;
-                inputResult.value = numberOne;
+                inputResult.textContent = numberOne;
             } 
         }
         // When an error occurs and a digit is pressed, the new value will be assigned to numberOne, and then it will be displayed on the calculator screen.
         else {
             numberOne = "";
-            inputResult.value = "";
+            inputResult.textContent = "";
             numberOne += button.value;
-            inputResult.value = numberOne;
+            inputResult.textContent = numberOne;
         }
     } else {
             if (numberTwo == "0" && button.value == "0") {
                 numberTwo = "0";
             } else if (numberTwo == "-" && button.value == "0") {
                 numberTwo = "-0";
-                inputResult.value = numberOne + operator + numberTwo;
+                inputResult.textContent = numberOne + operator + numberTwo;
             }
             else if (numberTwo != "0" && numberTwo != "-0") {
                 numberTwo += button.value;
-                inputResult.value = numberOne + operator + numberTwo;
+                inputResult.textContent = numberOne + operator + numberTwo;
             }
         }
 }
@@ -133,46 +135,46 @@ function operatorDisplay(event) {
         } else return;
     }
 
-    if (numberOne && numberOne != "-" && !operator && !numberTwo && inputResult.value !="ERROR") {
+    if (numberOne && numberOne != "-" && !operator && !numberTwo && inputResult.textContent !="ERROR") {
         operator = button.value;
-        inputResult.value = numberOne + operator;
-    } else if (inputResult.value == "ERROR") {
+        inputResult.textContent = numberOne + operator;
+    } else if (inputResult.textContent == "ERROR") {
         operator = "";
-    }  else if (numberOne == "" && inputResult.value == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
+    }  else if (numberOne == "" && inputResult.textContent == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
         numberOne = "0"
         operator = button.value;
-        inputResult.value = numberOne + operator;
+        inputResult.textContent = numberOne + operator;
     }
 }
 
 function decimalSeparatorDisplay(event) {
     if (event.type === "click" || event.key === ".") { 
         if (countDecimalDotOne == 0) {
-            if (inputResult.value == "0") {
-                inputResult.value = "0.";
+            if (inputResult.textContent == "0") {
+                inputResult.textContent = "0.";
                 numberOne = "0.";
                 countDecimalDotOne++;
                 // !numberOne.includes(".") is needed when the result contains a decimal point. If we want to add more digits to the result (which is also numberOne), the possibility of adding another dot should be blocked.
-            } else if (numberOne !="" && numberOne !="-" && operator == "" && inputResult.value != "ERROR" && !numberOne.includes(".")) {
-                inputResult.value += ".";
+            } else if (numberOne !="" && numberOne !="-" && operator == "" && inputResult.textContent != "ERROR" && !numberOne.includes(".")) {
+                inputResult.textContent += ".";
                 numberOne += ".";
                 countDecimalDotOne++;
-            } else if (inputResult.value == "ERROR") {
-                inputResult.value = "0.";
+            } else if (inputResult.textContent == "ERROR") {
+                inputResult.textContent = "0.";
                 numberOne = "0.";
                 countDecimalDotOne++;
             } else if (numberOne == "-") {
                 numberOne += "0.";
-                inputResult.value = numberOne;
+                inputResult.textContent = numberOne;
             }
         }
         if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
             if (numberTwo == "" || numberTwo == "-") {
-                inputResult.value += "0."
+                inputResult.textContent += "0."
                 numberTwo = "0.";
                 countDecimalDotTwo++;
             } else {
-                inputResult.value += "."
+                inputResult.textContent += "."
                 numberTwo += ".";
                 countDecimalDotTwo++;
             }
@@ -185,15 +187,17 @@ function clearAll (event) {
         numberOne = "";
         numberTwo = "";
         operator = "";
-        inputResult.value = 0;
-        inputCalc.value = "";
+        inputResult.textContent = 0;
+        inputCalc.textContent = "";
         countDecimalDotOne = 0;
         countDecimalDotTwo = 0;
     } else return;
 }
 
 function undo (event) {
-    if ((event.type === "click" || event.key === "Backspace") && inputResult.value != "ERROR") {
+    inputLengthCheck();
+
+    if ((event.type === "click" || event.key === "Backspace") && inputResult.textContent != "ERROR") {
         let lastCharacter;
         if (numberOne != "" && operator != "" && numberTwo != "") {
             lastCharacter = numberTwo.length-1;
@@ -201,17 +205,17 @@ function undo (event) {
                 countDecimalDotTwo = 0;
             }
             numberTwo = numberTwo.substring(0, lastCharacter);
-            inputResult.value = numberOne + operator + numberTwo;
+            inputResult.textContent = numberOne + operator + numberTwo;
         } else if (numberOne != "" && operator != "") {
             operator = "";
-            inputResult.value = numberOne;
+            inputResult.textContent = numberOne;
         } else if (numberOne) {
             lastCharacter = numberOne.length-1;
             if (numberOne.charAt(lastCharacter) == ".") {
                 countDecimalDotOne = 0;
             } 
             numberOne = numberOne.substring(0, lastCharacter);
-            inputResult.value = numberOne.length > 0 ? numberOne : "0";
+            inputResult.textContent = numberOne.length > 0 ? numberOne : "0";
     } else return;
 }
 }
@@ -225,10 +229,10 @@ function negative (event) {
         button = document.querySelector(`.negative[value="${event.key}"]`);
     } else return;
     // Without numberOne == “ERROR” after an error occurred, you could not start a new number with a minus sign.
-    if (inputResult.value === "ERROR") {
+    if (inputResult.textContent === "ERROR") {
         if (unlockNegative) {
             numberOne = "-";
-            inputResult.value = "-";
+            inputResult.textContent = "-";
             unlockNegative = false; // Block update again when first pressed
         } else {
             unlockNegative = true; // Mark the first press
@@ -236,10 +240,10 @@ function negative (event) {
     }
     if (!numberOne) {
         numberOne = button.value;
-        inputResult.value = numberOne;
+        inputResult.textContent = numberOne;
     } else if (numberOne && operator && !numberTwo && operator != "-") {
         numberTwo = button.value;
-        inputResult.value += numberTwo;            
+        inputResult.textContent += numberTwo;            
     }
 }
 
@@ -257,59 +261,67 @@ function result(event) {
     if (numberOne != "" && numberTwo != "" && numberTwo != "-" && operator != "") {
         switch (button.value) {
             case "=":
-                inputResult.value = operate(+numberOne, +numberTwo, operator);
-                inputCalc.value = numberOne + operator + numberTwo;
-                numberOne = inputResult.value;
+                inputResult.textContent = operate(+numberOne, +numberTwo, operator);
+                inputCalc.textContent = numberOne + operator + numberTwo;
+                numberOne = inputResult.textContent;
                 operator = "";
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
-                if (inputResult.value == "ERROR") unlockNegative = true;
+                if (inputResult.textContent == "ERROR") unlockNegative = true;
                 break;
             case "+":
-                inputResult.value = operate(+numberOne, +numberTwo, operator);
-                inputCalc.value = numberOne + operator + numberTwo;
-                numberOne = inputResult.value;
-                if (inputResult.value == "ERROR") operator = "";
+                inputResult.textContent = operate(+numberOne, +numberTwo, operator);
+                inputCalc.textContent = numberOne + operator + numberTwo;
+                numberOne = inputResult.textContent;
+                if (inputResult.textContent == "ERROR") operator = "";
                 else operator = "+";
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
-                inputResult.value = numberOne + operator;
+                inputResult.textContent = numberOne + operator;
                 break;
             case "-":
-                inputResult.value = operate(+numberOne, +numberTwo, operator);
-                inputCalc.value = numberOne + operator + numberTwo;
-                numberOne = inputResult.value;
-                if (inputResult.value == "ERROR") operator = "";   
+                inputResult.textContent = operate(+numberOne, +numberTwo, operator);
+                inputCalc.textContent = numberOne + operator + numberTwo;
+                numberOne = inputResult.textContent;
+                if (inputResult.textContent == "ERROR") operator = "";   
                 else operator = "-";
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
-                inputResult.value = numberOne + operator;
+                inputResult.textContent = numberOne + operator;
                 break;
             case "*":
-                inputResult.value = operate(+numberOne, +numberTwo, operator);
-                inputCalc.value = numberOne + operator + numberTwo;
-                numberOne = inputResult.value;
-                if (inputResult.value == "ERROR") operator = ""
+                inputResult.textContent = operate(+numberOne, +numberTwo, operator);
+                inputCalc.textContent = numberOne + operator + numberTwo;
+                numberOne = inputResult.textContent;
+                if (inputResult.textContent == "ERROR") operator = ""
                 else operator = "*"
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
-                inputResult.value = numberOne + operator;
+                inputResult.textContent = numberOne + operator;
                 break;
             case "/":
-                inputResult.value = operate(+numberOne, +numberTwo, operator);
-                inputCalc.value = numberOne + operator + numberTwo;
-                numberOne = inputResult.value;
-                if (inputResult.value == "ERROR") operator = ""
+                inputResult.textContent = operate(+numberOne, +numberTwo, operator);
+                inputCalc.textContent = numberOne + operator + numberTwo;
+                numberOne = inputResult.textContent;
+                if (inputResult.textContent == "ERROR") operator = ""
                 else operator = "/"
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
-                inputResult.value = numberOne + operator;
+                inputResult.textContent = numberOne + operator;
                 break;
         }
+    }
+}
+
+function inputLengthCheck () {
+    if (inputResult.textContent.length <= 9) {
+       return inputResult.style.fontSize = "70px";
+    } else {
+        return inputResult.style.fontSize = "35px";
     }
 }

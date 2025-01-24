@@ -22,19 +22,17 @@ input {
 
 #calculator-container {
     width: 500px;
-    height: 800px;
+    height: 825px;
     background-color: grey;
 }
 
 #calculator-screen {
     width: 500px;
     height: 200px;
-    background-color: yellow;
     display: flex;
     flex-direction: column;
-    justify-content: flex-end;
-    align-items: flex-end;
-    padding: 20px;
+    justify-content: center;
+    align-items: center;
 }
 
 .long-button {
@@ -54,4 +52,29 @@ input {
     justify-content: space-evenly;
     height: 600px;
     align-items: center;
+}
+
+#calculation {
+    width: 472.5px;
+    height: 50px;
+    background-color: black;
+    color: rgb(122, 225, 53);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-size: 35px;
+    padding-right: 10px;
+    
+}
+
+#result {
+    width: 472.5px;
+    height: 100px;
+    background-color: black;
+    color: rgb(122, 225, 53);
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-end;
+    font-size: 70px;
+    padding-right: 10px;
 }
