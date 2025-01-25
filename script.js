@@ -17,8 +17,9 @@ let numberTwo = "";
 let operator = "";
 inputResult.textContent = 0;
 
+
 function add (a, b) {
-    return Math.round((a + b) * 100) / 100;
+    return a + b;
 }
 
 function subtract (a, b) {
@@ -30,7 +31,7 @@ function multiply (a, b) {
 }
 
 function divide (a, b) {
-    if (b != 0) return a / b;
+    if (b != 0) return a / b;   
     else return "ERROR";
 }
 
@@ -58,15 +59,15 @@ document.addEventListener("keydown", digitsDisplay);
 
 operatorButtons.forEach(button => button.addEventListener("click", operatorDisplay));
 document.addEventListener("keydown", operatorDisplay);
- 
-equalButtons.forEach(button => button.addEventListener("click", result));
-document.addEventListener("keydown", result);
-
-decimalSeparator.addEventListener("click", decimalSeparatorDisplay);
-document.addEventListener("keydown", decimalSeparatorDisplay);   
 
 negativeButton.addEventListener("click", negative);
 document.addEventListener("keydown", negative);
+
+decimalSeparator.addEventListener("click", decimalSeparatorDisplay);
+document.addEventListener("keydown", decimalSeparatorDisplay); 
+
+equalButtons.forEach(button => button.addEventListener("click", result));
+document.addEventListener("keydown", result);
 
 clearButton.addEventListener("click", clearAll);
 document.addEventListener("keydown", clearAll);
@@ -76,8 +77,8 @@ document.addEventListener("keydown", undo);
 
 function digitsDisplay(event) {
     let button;
-
-    /* Depending on whether the user selected the appropriate button with the mouse or pressed a key on the keyboard, the appropriate HTML element is assigned to the button variable. Lines if (event.key >= 0 && event.key <= 9) { ... } and else return; are used to check if the user pressed the correct key on the keyboard. If not, the function is terminated. // Without this, when a key other than 0-9, e.g. “A”, was pressed, an error message “Uncaught TypeError: Cannot read properties of null (reading ‘value’)” would appear in the browser console, because the button variable would be empty. */
+    if (inputResult.textContent.length <= 25) {
+        /* Depending on whether the user selected the appropriate button with the mouse or pressed a key on the keyboard, the appropriate HTML element is assigned to the button variable. Lines if (event.key >= 0 && event.key <= 9) { ... } and else return; are used to check if the user pressed the correct key on the keyboard. If not, the function is terminated. // Without this, when a key other than 0-9, e.g. “A”, was pressed, an error message “Uncaught TypeError: Cannot read properties of null (reading ‘value’)” would appear in the browser console, because the button variable would be empty. */
     if (event.type === "click") button = event.target;
     else if (event.type === "keydown") {
         if (event.key >= 0 && event.key <= 9) {
@@ -85,7 +86,6 @@ function digitsDisplay(event) {
         } else return;
     }
     
-    inputLengthCheck();
     // First number 
     if (!operator) {
         if (inputResult.textContent != "ERROR") {
@@ -122,64 +122,69 @@ function digitsDisplay(event) {
                 inputResult.textContent = numberOne + operator + numberTwo;
             }
         }
+        inputLengthCheck();
+    } else return;
 }
 
 function operatorDisplay(event) {
     let button;
-
-    if (event.type === "click") {
-        button = event.target;
-    } else if (event.type === "keydown") {
-        if (event.key == "+" || event.key == "-" || event.key == "*" || event.key == "/") {
-            button = document.querySelector(`.operator[value="${event.key}"]`);
-        } else return;
-    }
-
-    if (numberOne && numberOne != "-" && !operator && !numberTwo && inputResult.textContent !="ERROR") {
-        operator = button.value;
-        inputResult.textContent = numberOne + operator;
-    } else if (inputResult.textContent == "ERROR") {
-        operator = "";
-    }  else if (numberOne == "" && inputResult.textContent == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
-        numberOne = "0"
-        operator = button.value;
-        inputResult.textContent = numberOne + operator;
-    }
+    if (inputResult.textContent.length <= 25) {
+        if (event.type === "click") {
+            button = event.target;
+        } else if (event.type === "keydown") {
+            if (event.key == "+" || event.key == "-" || event.key == "*" || event.key == "/") {
+                button = document.querySelector(`.operator[value="${event.key}"]`);
+            } else return;
+        }
+    
+        if (numberOne && numberOne != "-" && !operator && !numberTwo && inputResult.textContent !="ERROR") {
+            operator = button.value;
+            inputResult.textContent = numberOne + operator;
+        } else if (inputResult.textContent == "ERROR") {
+            operator = "";
+        }  else if (numberOne == "" && inputResult.textContent == 0 && (button.value == "+" || button.value == "*" || button.value == "/")) {
+            numberOne = "0"
+            operator = button.value;
+            inputResult.textContent = numberOne + operator;
+        }
+    } else return;
 }
 
 function decimalSeparatorDisplay(event) {
-    if (event.type === "click" || event.key === ".") { 
-        if (countDecimalDotOne == 0) {
-            if (inputResult.textContent == "0") {
-                inputResult.textContent = "0.";
-                numberOne = "0.";
-                countDecimalDotOne++;
-                // !numberOne.includes(".") is needed when the result contains a decimal point. If we want to add more digits to the result (which is also numberOne), the possibility of adding another dot should be blocked.
-            } else if (numberOne !="" && numberOne !="-" && operator == "" && inputResult.textContent != "ERROR" && !numberOne.includes(".")) {
-                inputResult.textContent += ".";
-                numberOne += ".";
-                countDecimalDotOne++;
-            } else if (inputResult.textContent == "ERROR") {
-                inputResult.textContent = "0.";
-                numberOne = "0.";
-                countDecimalDotOne++;
-            } else if (numberOne == "-") {
-                numberOne += "0.";
-                inputResult.textContent = numberOne;
+    if (inputResult.textContent.length <= 25) { 
+        if (event.type === "click" || event.key === ".") { 
+            if (countDecimalDotOne == 0) {
+                if (inputResult.textContent == "0") {
+                    inputResult.textContent = "0.";
+                    numberOne = "0.";
+                    countDecimalDotOne++;
+                    // !numberOne.includes(".") is needed when the result contains a decimal point. If we want to add more digits to the result (which is also numberOne), the possibility of adding another dot should be blocked.
+                } else if (numberOne !="" && numberOne !="-" && operator == "" && inputResult.textContent != "ERROR" && !numberOne.includes(".")) {
+                    inputResult.textContent += ".";
+                    numberOne += ".";
+                    countDecimalDotOne++;
+                } else if (inputResult.textContent == "ERROR") {
+                    inputResult.textContent = "0.";
+                    numberOne = "0.";
+                    countDecimalDotOne++;
+                } else if (numberOne == "-") {
+                    numberOne += "0.";
+                    inputResult.textContent = numberOne;
+                }
             }
-        }
-        if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
-            if (numberTwo == "" || numberTwo == "-") {
-                inputResult.textContent += "0."
-                numberTwo = "0.";
-                countDecimalDotTwo++;
-            } else {
-                inputResult.textContent += "."
-                numberTwo += ".";
-                countDecimalDotTwo++;
+            if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
+                if (numberTwo == "" || numberTwo == "-") {
+                    inputResult.textContent += "0."
+                    numberTwo = "0.";
+                    countDecimalDotTwo++;
+                } else {
+                    inputResult.textContent += "."
+                    numberTwo += ".";
+                    countDecimalDotTwo++;
+                }
             }
-        }
-    } else return;   
+        } else return;
+    } else return;     
 }
 
 function clearAll (event) {
@@ -192,11 +197,11 @@ function clearAll (event) {
         countDecimalDotOne = 0;
         countDecimalDotTwo = 0;
     } else return;
+    inputLengthCheck(); 
 }
 
 function undo (event) {
-    inputLengthCheck();
-
+    
     if ((event.type === "click" || event.key === "Backspace") && inputResult.textContent != "ERROR") {
         let lastCharacter;
         if (numberOne != "" && operator != "" && numberTwo != "") {
@@ -216,35 +221,38 @@ function undo (event) {
             } 
             numberOne = numberOne.substring(0, lastCharacter);
             inputResult.textContent = numberOne.length > 0 ? numberOne : "0";
-    } else return;
-}
+        } else return;
+    }
+    inputLengthCheck();
 }
 
 function negative (event) {
-    let button;
+    if (inputResult.textContent.length <= 25) {
+        let button;
 
-    if (event.type === "click") {
-        button = event.target;
-    } else if (event.type === "keydown" && event.key == "-") {
-        button = document.querySelector(`.negative[value="${event.key}"]`);
-    } else return;
-    // Without numberOne == “ERROR” after an error occurred, you could not start a new number with a minus sign.
-    if (inputResult.textContent === "ERROR") {
-        if (unlockNegative) {
-            numberOne = "-";
-            inputResult.textContent = "-";
-            unlockNegative = false; // Block update again when first pressed
-        } else {
-            unlockNegative = true; // Mark the first press
+        if (event.type === "click") {
+            button = event.target;
+        } else if (event.type === "keydown" && event.key == "-") {
+            button = document.querySelector(`.negative[value="${event.key}"]`);
+        } else return;
+        // Without numberOne == “ERROR” after an error occurred, you could not start a new number with a minus sign.
+        if (inputResult.textContent === "ERROR") {
+            if (unlockNegative) {
+                numberOne = "-";
+                inputResult.textContent = "-";
+                unlockNegative = false; // Block update again when first pressed
+            } else {
+                unlockNegative = true; // Mark the first press
+            }
         }
-    }
-    if (!numberOne) {
-        numberOne = button.value;
-        inputResult.textContent = numberOne;
-    } else if (numberOne && operator && !numberTwo && operator != "-") {
-        numberTwo = button.value;
-        inputResult.textContent += numberTwo;            
-    }
+        if (!numberOne) {
+            numberOne = button.value;
+            inputResult.textContent = numberOne;
+        } else if (numberOne && operator && !numberTwo && operator != "-") {
+            numberTwo = button.value;
+            inputResult.textContent += numberTwo;            
+        }
+    } else return;  
 }
 
 function result(event) {
@@ -316,6 +324,7 @@ function result(event) {
                 break;
         }
     }
+    inputLengthCheck();
 }
 
 function inputLengthCheck () {
