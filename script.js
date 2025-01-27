@@ -7,6 +7,17 @@ const clearButton = document.querySelector("#clear");
 const undoButton = document.querySelector("#undo");
 const negativeButton = document.querySelector(".negative");
 const decimalSeparator = document.querySelector(".decimal-dot");
+const calculatorColorInput = document.querySelector("#calculator-color");
+const calculatorContainer = document.querySelector("#calculator-container");
+const digitsSectionInput = document.querySelector("#digits-section");
+const digitsSection = document.querySelectorAll(".digits, .decimal-dot");
+const backgroundPageColor = document.querySelector("body");
+const backgroundColorInput = document.querySelector("#background");
+const fonts = document.querySelectorAll("p, button, label"); 
+const fontsColor = document.querySelector("#font");
+const symbolsSectionColor = document.querySelector("#symbols-section");
+const undoButtonColor = document.querySelector("#undo-button");
+const clearButtonColor = document.querySelector("#clear-button");
 
 let countDecimalDotOne = 0;
 let countDecimalDotTwo = 0;
@@ -74,6 +85,40 @@ document.addEventListener("keydown", clearAll);
 
 undoButton.addEventListener("click", undo);
 document.addEventListener("keydown", undo);
+
+calculatorColorInput.addEventListener("input", () => {
+    calculatorContainer.style.backgroundColor = calculatorColorInput.value; 
+});
+
+digitsSectionInput.addEventListener("input", () => {
+    digitsSection.forEach(button => {
+        button.style.backgroundColor = digitsSectionInput.value; 
+    });
+});
+
+backgroundColorInput.addEventListener("input", () => {
+    backgroundPageColor.style.backgroundColor = backgroundColorInput.value; 
+});
+
+fontsColor.addEventListener("input", () => {
+    fonts.forEach(element => {
+        element.style.color = fontsColor.value; 
+    });
+});
+
+symbolsSectionColor.addEventListener("input", () => {
+    equalButtons.forEach(element => {
+        element.style.backgroundColor = symbolsSectionColor.value; 
+    });
+});
+
+undoButtonColor.addEventListener("input", () => {
+    undoButton.style.backgroundColor = undoButtonColor.value; 
+});
+
+clearButtonColor.addEventListener("input", () => {
+    clearButton.style.backgroundColor = clearButtonColor.value; 
+});
 
 function digitsDisplay(event) {
     let button;

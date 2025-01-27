@@ -9,15 +9,18 @@ margin: 0;
 
 body {
     background-color: black;
-    color: black;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    color: white;
 }
 
 input {
     display: block;
+}
+
+#calculator-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
 #calculator-container {
@@ -117,4 +120,23 @@ button {
     font-size: 20px;
     color: rgb(255, 255, 255);
     font-weight: 800;
+}
+
+#color-change-wrapper {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+}
+
+#color-change {
+    display: flex;
+    flex-direction: column;
+}
+
+#color-change div {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 20px 0 0 0;
+    gap: 10px;
 }
