@@ -9,7 +9,7 @@ const negativeButton = document.querySelector(".negative");
 const decimalSeparator = document.querySelector(".decimal-dot");
 const calculatorColorInput = document.querySelector("#calculator-color");
 const calculatorContainer = document.querySelector("#calculator-container");
-const digitsSectionInput = document.querySelector("#digits-section");
+const digitsSectionColor = document.querySelector("#digits-section");
 const digitsSection = document.querySelectorAll(".digits, .decimal-dot");
 const backgroundPageColor = document.querySelector("body");
 const backgroundColorInput = document.querySelector("#background");
@@ -86,13 +86,38 @@ document.addEventListener("keydown", clearAll);
 undoButton.addEventListener("click", undo);
 document.addEventListener("keydown", undo);
 
+// Function to dim a color by a percentage
+function dimColor(color, percent) {
+    // Convert the hex color to RGB
+    let r = parseInt(color.slice(1, 3), 16);
+    let g = parseInt(color.slice(3, 5), 16);
+    let b = parseInt(color.slice(5, 7), 16);
+
+    // Decrease each RGB channel by the specified percentage
+    r =  r * (1 - percent / 100);
+    g =  g * (1 - percent / 100);
+    b = b * (1 - percent / 100);
+
+    // Return the new color in RGB format
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+}
+
 calculatorColorInput.addEventListener("input", () => {
     calculatorContainer.style.backgroundColor = calculatorColorInput.value; 
 });
 
-digitsSectionInput.addEventListener("input", () => {
-    digitsSection.forEach(button => {
-        button.style.backgroundColor = digitsSectionInput.value; 
+digitsSectionColor.addEventListener("input", () => {
+    const chosenColor = digitsSectionColor.value; 
+    digitsSection.forEach(element => {
+        element.style.backgroundColor = chosenColor;
+        
+        // Set the hover effect to dim the color by 10%
+        element.addEventListener("mouseover", () => {
+            element.style.backgroundColor = dimColor(chosenColor, 10);
+        });
+        element.addEventListener("mouseout", () => {
+            element.style.backgroundColor = chosenColor;
+        });
     });
 });
 
@@ -104,20 +129,51 @@ fontsColor.addEventListener("input", () => {
     fonts.forEach(element => {
         element.style.color = fontsColor.value; 
     });
-});
+}); 
 
 symbolsSectionColor.addEventListener("input", () => {
+    const chosenColor = symbolsSectionColor.value; 
     equalButtons.forEach(element => {
-        element.style.backgroundColor = symbolsSectionColor.value; 
+        element.style.backgroundColor = symbolsSectionColor.value;
+        
+        // Set the hover effect to dim the color by 10%
+        element.addEventListener("mouseover", () => {
+            element.style.backgroundColor = dimColor(chosenColor, 10);
+        });
+        element.addEventListener("mouseout", () => {
+            element.style.backgroundColor = chosenColor;
+        });
     });
 });
 
 undoButtonColor.addEventListener("input", () => {
-    undoButton.style.backgroundColor = undoButtonColor.value; 
+    const chosenColor = undoButtonColor.value; 
+    undoButton.style.backgroundColor = chosenColor; 
+
+    // Set the hover effect to dim the color by 10%
+    undoButton.addEventListener("mouseover", () => {
+        undoButton.style.backgroundColor = dimColor(chosenColor, 10);
+    });
+
+    // Reset to the original color when not hovering
+    undoButton.addEventListener("mouseout", () => {
+        undoButton.style.backgroundColor = chosenColor;
+    });
 });
 
 clearButtonColor.addEventListener("input", () => {
-    clearButton.style.backgroundColor = clearButtonColor.value; 
+    const chosenColor = clearButtonColor.value; 
+    clearButton.style.backgroundColor = chosenColor; 
+
+    // Set the hover effect to dim the color by 10%
+    clearButton.addEventListener("mouseover", () => {
+        clearButton.style.backgroundColor = dimColor(chosenColor, 10);
+    });
+
+    // Reset to the original color when not hovering
+    clearButton.addEventListener("mouseout", () => {
+        clearButton.style.backgroundColor = chosenColor;
+    });
 });
 
 function digitsDisplay(event) {
