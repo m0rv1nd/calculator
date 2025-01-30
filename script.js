@@ -1,3 +1,4 @@
+// SELECTOR VARIABLES
 const digitButtons = document.querySelectorAll(".digits");
 const operatorButtons = document.querySelectorAll(".operator");
 const equalButtons = document.querySelectorAll(".equal");
@@ -19,16 +20,124 @@ const symbolsSectionColor = document.querySelector("#symbols-section");
 const undoButtonColor = document.querySelector("#undo-button");
 const clearButtonColor = document.querySelector("#clear-button");
 
+// DEFAULT CALCULATOR STATE
 let countDecimalDotOne = 0;
 let countDecimalDotTwo = 0;
 let unlockNegative = false;
-
 let numberOne = "";
 let numberTwo = "";
 let operator = "";
 inputResult.textContent = 0;
 
+// LISTENER METHODS
+digitButtons.forEach(button => button.addEventListener("click", digitsDisplay));
+document.addEventListener("keydown", digitsDisplay);
 
+operatorButtons.forEach(button => button.addEventListener("click", operatorDisplay));
+document.addEventListener("keydown", operatorDisplay);
+
+negativeButton.addEventListener("click", negative);
+document.addEventListener("keydown", negative);
+
+decimalSeparator.addEventListener("click", decimalSeparatorDisplay);
+document.addEventListener("keydown", decimalSeparatorDisplay); 
+
+equalButtons.forEach(button => button.addEventListener("click", result));
+document.addEventListener("keydown", result);
+
+clearButton.addEventListener("click", clearAll);
+document.addEventListener("keydown", clearAll);
+
+undoButton.addEventListener("click", undo);
+document.addEventListener("keydown", undo);
+
+// CHANGE COLORS
+// Function to dim a color by a percentage
+function dimColor(color, percent) {
+    // Convert the hex color to RGB
+    let r = parseInt(color.slice(1, 3), 16);
+    let g = parseInt(color.slice(3, 5), 16);
+    let b = parseInt(color.slice(5, 7), 16);
+
+    // Decrease each RGB channel by the specified percentage
+    r =  r * (1 - percent / 100);
+    g =  g * (1 - percent / 100);
+    b = b * (1 - percent / 100);
+
+    // Return the new color in RGB format
+    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
+}
+
+calculatorColorInput.addEventListener("input", () => {
+    calculatorContainer.style.backgroundColor = calculatorColorInput.value; 
+});
+
+digitsSectionColor.addEventListener("input", () => {
+    const chosenColor = digitsSectionColor.value; 
+    digitsSection.forEach(element => {
+        element.style.backgroundColor = chosenColor;
+        
+        // Set the hover effect to dim the color by 10%
+        element.addEventListener("mouseover", () => {
+            element.style.backgroundColor = dimColor(chosenColor, 10);
+        });
+        // Reset to the original color when not hovering
+        element.addEventListener("mouseout", () => {
+            element.style.backgroundColor = chosenColor;
+        });
+    });
+});
+
+backgroundColorInput.addEventListener("input", () => {
+    backgroundPageColor.style.backgroundColor = backgroundColorInput.value; 
+});
+
+fontsColor.addEventListener("input", () => {
+    fonts.forEach(element => {
+        element.style.color = fontsColor.value; 
+    });
+}); 
+
+symbolsSectionColor.addEventListener("input", () => {
+    const chosenColor = symbolsSectionColor.value; 
+    equalButtons.forEach(element => {
+        element.style.backgroundColor = symbolsSectionColor.value;
+        
+        element.addEventListener("mouseover", () => {
+            element.style.backgroundColor = dimColor(chosenColor, 10);
+        });
+        element.addEventListener("mouseout", () => {
+            element.style.backgroundColor = chosenColor;
+        });
+    });
+});
+
+undoButtonColor.addEventListener("input", () => {
+    const chosenColor = undoButtonColor.value; 
+    undoButton.style.backgroundColor = chosenColor; 
+
+    undoButton.addEventListener("mouseover", () => {
+        undoButton.style.backgroundColor = dimColor(chosenColor, 10);
+    });
+    undoButton.addEventListener("mouseout", () => {
+        undoButton.style.backgroundColor = chosenColor;
+    });
+});
+
+clearButtonColor.addEventListener("input", () => {
+    const chosenColor = clearButtonColor.value; 
+    clearButton.style.backgroundColor = chosenColor; 
+
+    clearButton.addEventListener("mouseover", () => {
+        clearButton.style.backgroundColor = dimColor(chosenColor, 10);
+    });
+
+    clearButton.addEventListener("mouseout", () => {
+        clearButton.style.backgroundColor = chosenColor;
+    });
+});
+
+// calculator logic
 function add (a, b) {
     return a + b;
 }
@@ -65,121 +174,10 @@ function operate (a, b, symbol) {
     return result;
 }
 
-digitButtons.forEach(button => button.addEventListener("click", digitsDisplay));
-document.addEventListener("keydown", digitsDisplay);
-
-operatorButtons.forEach(button => button.addEventListener("click", operatorDisplay));
-document.addEventListener("keydown", operatorDisplay);
-
-negativeButton.addEventListener("click", negative);
-document.addEventListener("keydown", negative);
-
-decimalSeparator.addEventListener("click", decimalSeparatorDisplay);
-document.addEventListener("keydown", decimalSeparatorDisplay); 
-
-equalButtons.forEach(button => button.addEventListener("click", result));
-document.addEventListener("keydown", result);
-
-clearButton.addEventListener("click", clearAll);
-document.addEventListener("keydown", clearAll);
-
-undoButton.addEventListener("click", undo);
-document.addEventListener("keydown", undo);
-
-// Function to dim a color by a percentage
-function dimColor(color, percent) {
-    // Convert the hex color to RGB
-    let r = parseInt(color.slice(1, 3), 16);
-    let g = parseInt(color.slice(3, 5), 16);
-    let b = parseInt(color.slice(5, 7), 16);
-
-    // Decrease each RGB channel by the specified percentage
-    r =  r * (1 - percent / 100);
-    g =  g * (1 - percent / 100);
-    b = b * (1 - percent / 100);
-
-    // Return the new color in RGB format
-    return `rgb(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)})`;
-}
-
-calculatorColorInput.addEventListener("input", () => {
-    calculatorContainer.style.backgroundColor = calculatorColorInput.value; 
-});
-
-digitsSectionColor.addEventListener("input", () => {
-    const chosenColor = digitsSectionColor.value; 
-    digitsSection.forEach(element => {
-        element.style.backgroundColor = chosenColor;
-        
-        // Set the hover effect to dim the color by 10%
-        element.addEventListener("mouseover", () => {
-            element.style.backgroundColor = dimColor(chosenColor, 10);
-        });
-        element.addEventListener("mouseout", () => {
-            element.style.backgroundColor = chosenColor;
-        });
-    });
-});
-
-backgroundColorInput.addEventListener("input", () => {
-    backgroundPageColor.style.backgroundColor = backgroundColorInput.value; 
-});
-
-fontsColor.addEventListener("input", () => {
-    fonts.forEach(element => {
-        element.style.color = fontsColor.value; 
-    });
-}); 
-
-symbolsSectionColor.addEventListener("input", () => {
-    const chosenColor = symbolsSectionColor.value; 
-    equalButtons.forEach(element => {
-        element.style.backgroundColor = symbolsSectionColor.value;
-        
-        // Set the hover effect to dim the color by 10%
-        element.addEventListener("mouseover", () => {
-            element.style.backgroundColor = dimColor(chosenColor, 10);
-        });
-        element.addEventListener("mouseout", () => {
-            element.style.backgroundColor = chosenColor;
-        });
-    });
-});
-
-undoButtonColor.addEventListener("input", () => {
-    const chosenColor = undoButtonColor.value; 
-    undoButton.style.backgroundColor = chosenColor; 
-
-    // Set the hover effect to dim the color by 10%
-    undoButton.addEventListener("mouseover", () => {
-        undoButton.style.backgroundColor = dimColor(chosenColor, 10);
-    });
-
-    // Reset to the original color when not hovering
-    undoButton.addEventListener("mouseout", () => {
-        undoButton.style.backgroundColor = chosenColor;
-    });
-});
-
-clearButtonColor.addEventListener("input", () => {
-    const chosenColor = clearButtonColor.value; 
-    clearButton.style.backgroundColor = chosenColor; 
-
-    // Set the hover effect to dim the color by 10%
-    clearButton.addEventListener("mouseover", () => {
-        clearButton.style.backgroundColor = dimColor(chosenColor, 10);
-    });
-
-    // Reset to the original color when not hovering
-    clearButton.addEventListener("mouseout", () => {
-        clearButton.style.backgroundColor = chosenColor;
-    });
-});
-
 function digitsDisplay(event) {
     let button;
     if (inputResult.textContent.length <= 25) {
-        /* Depending on whether the user selected the appropriate button with the mouse or pressed a key on the keyboard, the appropriate HTML element is assigned to the button variable. Lines if (event.key >= 0 && event.key <= 9) { ... } and else return; are used to check if the user pressed the correct key on the keyboard. If not, the function is terminated. // Without this, when a key other than 0-9, e.g. “A”, was pressed, an error message “Uncaught TypeError: Cannot read properties of null (reading ‘value’)” would appear in the browser console, because the button variable would be empty. */
+        /* Depending on whether the user selected the appropriate button with the mouse or pressed a key on the keyboard, the appropriate HTML element is assigned to the button variable. Lines if (event.key >= 0 && event.key <= 9) { ... } and else return; are used to check if the user pressed the correct key on the keyboard. If not, the function is terminated. Without this, when a key other than 0-9, e.g. “A”, was pressed, an error message “Uncaught TypeError: Cannot read properties of null (reading ‘value’)” would appear in the browser console, because the button variable would be empty. */
     if (event.type === "click") button = event.target;
     else if (event.type === "keydown") {
         if (event.key >= 0 && event.key <= 9) {
@@ -211,6 +209,7 @@ function digitsDisplay(event) {
             numberOne += button.value;
             inputResult.textContent = numberOne;
         }
+    // Second number
     } else {
             if (numberTwo == "0" && button.value == "0") {
                 numberTwo = "0";
@@ -253,13 +252,14 @@ function operatorDisplay(event) {
 
 function decimalSeparatorDisplay(event) {
     if (inputResult.textContent.length <= 25) { 
-        if (event.type === "click" || event.key === ".") { 
+        if (event.type === "click" || event.key === ".") {
+            // add decimal point to first number 
             if (countDecimalDotOne == 0) {
                 if (inputResult.textContent == "0") {
                     inputResult.textContent = "0.";
                     numberOne = "0.";
                     countDecimalDotOne++;
-                    // !numberOne.includes(".") is needed when the result contains a decimal point. If we want to add more digits to the result (which is also numberOne), the possibility of adding another dot should be blocked.
+                    // !numberOne.includes(".") is needed when the result contains a decimal point. If we want to add more digits to the result (which is also numberOne), the possibility of adding another dot should be blocked
                 } else if (numberOne !="" && numberOne !="-" && operator == "" && inputResult.textContent != "ERROR" && !numberOne.includes(".")) {
                     inputResult.textContent += ".";
                     numberOne += ".";
@@ -273,6 +273,7 @@ function decimalSeparatorDisplay(event) {
                     inputResult.textContent = numberOne;
                 }
             }
+            // add decimal point to second number
             if (numberOne != "" && operator != "" && countDecimalDotTwo == 0) {
                 if (numberTwo == "" || numberTwo == "-") {
                     inputResult.textContent += "0."
@@ -305,6 +306,7 @@ function undo (event) {
     
     if ((event.type === "click" || event.key === "Backspace") && inputResult.textContent != "ERROR") {
         let lastCharacter;
+        
         if (numberOne != "" && operator != "" && numberTwo != "") {
             lastCharacter = numberTwo.length-1;
             if (numberTwo.charAt(lastCharacter) == ".") {
@@ -341,10 +343,10 @@ function negative (event) {
             if (unlockNegative) {
                 numberOne = "-";
                 inputResult.textContent = "-";
-                unlockNegative = false; // Block update again when first pressed
-            } else {
+                unlockNegative = false;  // Block update again when first pressed
+            }  else {
                 unlockNegative = true; // Mark the first press
-            }
+            } 
         }
         if (!numberOne) {
             numberOne = button.value;
@@ -377,7 +379,7 @@ function result(event) {
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
-                if (inputResult.textContent == "ERROR") unlockNegative = true;
+                if (inputResult.textContent == "ERROR")  unlockNegative = true;  
                 break;
             case "+":
                 inputResult.textContent = operate(+numberOne, +numberTwo, operator);
@@ -394,8 +396,11 @@ function result(event) {
                 inputResult.textContent = operate(+numberOne, +numberTwo, operator);
                 inputCalc.textContent = numberOne + operator + numberTwo;
                 numberOne = inputResult.textContent;
-                if (inputResult.textContent == "ERROR") operator = "";   
-                else operator = "-";
+                if (inputResult.textContent == "ERROR") {
+                    operator = "";
+                    unlockNegative = true;  
+                }   
+                else  operator = "-";
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
