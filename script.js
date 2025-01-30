@@ -23,7 +23,6 @@ const clearButtonColor = document.querySelector("#clear-button");
 // DEFAULT CALCULATOR STATE
 let countDecimalDotOne = 0;
 let countDecimalDotTwo = 0;
-let unlockNegative = false;
 let numberOne = "";
 let numberTwo = "";
 let operator = "";
@@ -338,15 +337,9 @@ function negative (event) {
         } else if (event.type === "keydown" && event.key == "-") {
             button = document.querySelector(`.negative[value="${event.key}"]`);
         } else return;
-        // Without numberOne == “ERROR” after an error occurred, you could not start a new number with a minus sign.
         if (inputResult.textContent === "ERROR") {
-            if (unlockNegative) {
                 numberOne = "-";
                 inputResult.textContent = "-";
-                unlockNegative = false;  // Block update again when first pressed
-            }  else {
-                unlockNegative = true; // Mark the first press
-            } 
         }
         if (!numberOne) {
             numberOne = button.value;
@@ -378,8 +371,7 @@ function result(event) {
                 operator = "";
                 numberTwo = "";
                 countDecimalDotOne = 0;
-                countDecimalDotTwo = 0;
-                if (inputResult.textContent == "ERROR")  unlockNegative = true;  
+                countDecimalDotTwo = 0;  
                 break;
             case "+":
                 inputResult.textContent = operate(+numberOne, +numberTwo, operator);
@@ -398,9 +390,8 @@ function result(event) {
                 numberOne = inputResult.textContent;
                 if (inputResult.textContent == "ERROR") {
                     operator = "";
-                    unlockNegative = true;  
-                }   
-                else  operator = "-";
+                }    
+                else operator = "-";
                 numberTwo = "";
                 countDecimalDotOne = 0;
                 countDecimalDotTwo = 0;
